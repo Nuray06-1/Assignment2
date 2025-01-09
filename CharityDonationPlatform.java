@@ -1,134 +1,98 @@
-import java.util.Objects; // Importing for overriding equals and hashCode
-
-// Class representing a Donor
-class Donor {
-    // Private fields (encapsulation)
-    private String name; // Donor's name
-    private double totalDonations; // Total donations made by the donor
-
-    // Constructor to initialize donor's name and set donations to 0
-    public Donor(String name) {
+import java.util.*; // Importing for collections and utility methods
+// Abstract class representing a Person (common parent for Donor and Charity)
+abstract class Person {
+    private String name;
+    // Constructor
+    public Person(String name) {
         this.name = name;
-        this.totalDonations = 0.0;
     }
-
-    // Getter for donor's name
+    // Getter for name
     public String getName() {
         return name;
     }
-
-    // Setter for donor's name
+    // Setter for name
     public void setName(String name) {
         this.name = name;
     }
-
+    // Abstract method to display details (to be implemented by subclasses)
+    public abstract void displayInfo();
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "'}";
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return Objects.equals(name, person.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+}
+// Class representing a Donor (inherits from Person)
+class Donor extends Person {
+    private double totalDonations;
+    // Constructor
+    public Donor(String name) {
+        super(name);
+        this.totalDonations = 0.0;
+    }
     // Getter for total donations
     public double getTotalDonations() {
         return totalDonations;
     }
-
-    // Method to add a donation amount to the donor's total
+    // Method to add a donation
     public void addDonation(double amount) {
         this.totalDonations += amount;
     }
-
-    // Overriding the toString() method to provide a string representation of a Donor
+    // Override displayInfo() to show donor details
     @Override
-    public String toString() {
-        return "Donor{name='" + name + "', totalDonations=" + totalDonations + '}';
-    }
-
-    // Overriding equals() to compare two Donor objects based on their name and donations
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true; // Check if the objects are the same instance
-        if (obj == null || getClass() != obj.getClass()) return false; // Check type
-        Donor donor = (Donor) obj;
-        return Double.compare(donor.totalDonations, totalDonations) == 0 &&
-               Objects.equals(name, donor.name);
-    }
-
-    // Overriding hashCode() to generate a unique hash for Donor objects
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, totalDonations);
-    }
-
-    // Method to display donor's information
     public void displayInfo() {
-        System.out.println("Donor Name: " + name);
+        System.out.println("Donor Name: " + getName());
         System.out.println("Total Donations: $" + totalDonations);
     }
+    @Override
+    public String toString() {
+        return "Donor{name='" + getName() + "', totalDonations=" + totalDonations + '}';
+    }
 }
-
-// Class representing a Charity
-class Charity {
-    // Private fields (encapsulation)
-    private String name; // Charity's name
-    private double totalReceived; // Total donations received by the charity
-
-    // Constructor to initialize charity's name and donations received
+// Class representing a Charity (inherits from Person)
+class Charity extends Person {
+    private double totalReceived;
+    // Constructor
     public Charity(String name) {
-        this.name = name;
+        super(name);
         this.totalReceived = 0.0;
     }
-
-    // Getter for charity's name
-    public String getName() {
-        return name;
-    }
-
-    // Setter for charity's name
-    public void setName(String name) {
-        this.name = name;
-    }
-
     // Getter for total donations received
     public double getTotalReceived() {
         return totalReceived;
     }
-
-    // Method to add a donation amount to the charity's total
+    // Method to add a donation amount
     public void receiveDonation(double amount) {
         this.totalReceived += amount;
     }
-
-    // Overriding the toString() method to provide a string representation of a Charity
+    // Override displayInfo() to show charity details
     @Override
-    public String toString() {
-        return "Charity{name='" + name + "', totalReceived=" + totalReceived + '}';
-    }
-
-    // Overriding equals() to compare two Charity objects based on their name and donations received
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true; // Check if the objects are the same instance
-        if (obj == null || getClass() != obj.getClass()) return false; // Check type
-        Charity charity = (Charity) obj;
-        return Double.compare(charity.totalReceived, totalReceived) == 0 &&
-               Objects.equals(name, charity.name);
-    }
-
-    // Overriding hashCode() to generate a unique hash for Charity objects
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, totalReceived);
-    }
-
-    // Method to display charity's information
     public void displayInfo() {
-        System.out.println("Charity Name: " + name);
+        System.out.println("Charity Name: " + getName());
         System.out.println("Total Donations Received: $" + totalReceived);
     }
+    @Override
+    public String toString() {
+        return "Charity{name='" + getName() + "', totalReceived=" + totalReceived + '}';
+    }
 }
-
-// Class representing a Donation (association between Donor and Charity)
+// Class representing a Donation
 class Donation {
-    private Donor donor; // Donor who made the donation
-    private Charity charity; // Charity that received the donation
-    private double amount; // Amount of the donation
+    private Donor donor;
+    private Charity charity;
+    private double amount;
 
-    // Constructor to initialize the donation and update donor and charity totals
+    // Constructor
     public Donation(Donor donor, Charity charity, double amount) {
         this.donor = donor;
         this.charity = charity;
@@ -136,72 +100,131 @@ class Donation {
         donor.addDonation(amount); // Update donor's total donations
         charity.receiveDonation(amount); // Update charity's total received
     }
-
-    // Method to display the details of the donation
-    public void displayDetails() {
-        System.out.println("Donation Details:");
-        System.out.println("Donor: " + donor.getName());
-        System.out.println("Charity: " + charity.getName());
-        System.out.println("Amount: $" + amount);
+    // Getter methods
+    public Donor getDonor() {
+        return donor;
     }
-
-    // Overriding the toString() method to provide a string representation of a Donation
+    public Charity getCharity() {
+        return charity;
+    }
+    public double getAmount() {
+        return amount;
+    }
+    // Override toString() to display donation details
     @Override
     public String toString() {
-        return "Donation{donor=" + donor + ", charity=" + charity + ", amount=" + amount + '}';
+        return "Donation{donor=" + donor.getName() + ", charity=" + charity.getName() + ", amount=" + amount + '}';
     }
 }
-
-// Main class representing the charity donation platform
+// Class representing the Charity Donation Platform
 public class CharityDonationPlatform {
+    private List<Donor> donors;        // List of donors
+    private List<Charity> charities;  // List of charities
+    private List<Donation> donations; // List of donations
+    // Constructor to initialize the platform
+    public CharityDonationPlatform() {
+        donors = new ArrayList<>();
+        charities = new ArrayList<>();
+        donations = new ArrayList<>();
+    }
+    // Add a donor
+    public void addDonor(Donor donor) {
+        donors.add(donor);
+    }
+    // Add a charity
+    public void addCharity(Charity charity) {
+        charities.add(charity);
+    }
+    // Add a donation
+    public void addDonation(Donation donation) {
+        donations.add(donation);
+    }
+
+    // Display all donors
+    public void displayDonors() {
+        System.out.println("\n--- Donors ---");
+        for (Donor donor : donors) {
+            donor.displayInfo();
+        }
+    }
+    // Display all charities
+    public void displayCharities() {
+        System.out.println("\n--- Charities ---");
+        for (Charity charity : charities) {
+            charity.displayInfo();
+        }
+    }
+    // Display all donations
+    public void displayDonations() {
+        System.out.println("\n--- Donations ---");
+        for (Donation donation : donations) {
+            System.out.println(donation);
+        }
+    }
+    // Filter donors by minimum donations
+    public void filterDonorsByDonation(double minDonation) {
+        System.out.println("\n--- Donors with Donations >= $" + minDonation + " ---");
+        for (Donor donor : donors) {
+            if (donor.getTotalDonations() >= minDonation) {
+                donor.displayInfo();
+            }
+        }
+    }
+    // Sort charities by total donations received
+    public void sortCharitiesByDonations() {
+        charities.sort(Comparator.comparingDouble(Charity::getTotalReceived).reversed());
+        System.out.println("\n--- Charities Sorted by Donations ---");
+        displayCharities();
+    }
+    // Search for a donor by name
+    public Donor searchDonor(String name) {
+        for (Donor donor : donors) {
+            if (donor.getName().equalsIgnoreCase(name)) {
+                return donor;
+            }
+        }
+        return null;
+    }
+    // Main method
     public static void main(String[] args) {
-        // Create donor objects
+        // Initialize the platform
+        CharityDonationPlatform platform = new CharityDonationPlatform();
+
+        // Create donors and charities
         Donor donor1 = new Donor("Alice");
         Donor donor2 = new Donor("Bob");
+        platform.addDonor(donor1);
+        platform.addDonor(donor2);
 
-        // Create charity objects
         Charity charity1 = new Charity("Save the Children");
         Charity charity2 = new Charity("Red Cross");
+        platform.addCharity(charity1);
+        platform.addCharity(charity2);
 
-        // Create donation objects
+        // Create donations
         Donation donation1 = new Donation(donor1, charity1, 100);
         Donation donation2 = new Donation(donor2, charity1, 150);
         Donation donation3 = new Donation(donor1, charity2, 200);
+        platform.addDonation(donation1);
+        platform.addDonation(donation2);
+        platform.addDonation(donation3);
 
-        // Display donation details
-        System.out.println("\n--- Donation Details ---");
-        donation1.displayDetails();
-        donation2.displayDetails();
-        donation3.displayDetails();
+        // Display data
+        platform.displayDonors();
+        platform.displayCharities();
+        platform.displayDonations();
 
-        // Display donor information
-        System.out.println("\n--- Donor Information ---");
-        donor1.displayInfo();
-        donor2.displayInfo();
+        // Filter and sort
+        platform.filterDonorsByDonation(150);
+        platform.sortCharitiesByDonations();
 
-        // Display charity information
-        System.out.println("\n--- Charity Information ---");
-        charity1.displayInfo();
-        charity2.displayInfo();
-
-        // Compare donors by total donations
-        System.out.println("\n--- Comparing Donors ---");
-        if (donor1.getTotalDonations() > donor2.getTotalDonations()) {
-            System.out.println(donor1.getName() + " donated more than " + donor2.getName());
-        } else if (donor1.getTotalDonations() < donor2.getTotalDonations()) {
-            System.out.println(donor2.getName() + " donated more than " + donor1.getName());
+        // Search for a donor
+        Donor searchResult = platform.searchDonor("Alice");
+        if (searchResult != null) {
+            System.out.println("\n--- Search Result ---");
+            searchResult.displayInfo();
         } else {
-            System.out.println(donor1.getName() + " and " + donor2.getName() + " donated the same amount.");
-        }
-
-        // Compare charities by total donations received
-        System.out.println("\n--- Comparing Charities ---");
-        if (charity1.getTotalReceived() > charity2.getTotalReceived()) {
-            System.out.println(charity1.getName() + " received more donations than " + charity2.getName());
-        } else if (charity1.getTotalReceived() < charity2.getTotalReceived()) {
-            System.out.println(charity2.getName() + " received more donations than " + charity1.getName());
-        } else {
-            System.out.println(charity1.getName() + " and " + charity2.getName() + " received the same amount of donations.");
+            System.out.println("\nDonor not found.");
         }
     }
 }
